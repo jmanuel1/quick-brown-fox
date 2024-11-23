@@ -98,10 +98,21 @@ foxPositions = forward ++ (reverse <$> forward) where
 
 hasFox board = getAny $ foldMap (\ps -> Any $ cell (ps !! 0) board == 0b00 && cell (ps !! 1) board == 0b01 && cell (ps !! 2) board == 0b10) foxPositions
 
+showCell 0b00 = 'f'
+showCell 0b01 = 'o'
+showCell 0b10 = 'x'
+
+showBoardRow row board = (\col -> showCell $ cell (col + row * 4) board) <$> [0, 1, 2, 3]
+
+showBoard board = intercalate "\n" (flip showBoardRow board <$> [0, 1, 2, 3])
+
 main = do
   print foxCombos
   print ofxCombos
   print (combos 1 [1 .. 16])
   print (combos 2 [1 .. 16])
   print (length (combos fs [1 .. 16]) * length (combos os [1 .. 16 - fs]))
-  print (length $ filter (not . hasFox) boards)
+  let wins = filter (not . hasFox) boards
+  print (length wins)
+  for wins $ \b -> do
+    putStrLn (showBoard b ++ "\n")
