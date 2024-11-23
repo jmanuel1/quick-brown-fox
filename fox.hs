@@ -3,6 +3,7 @@
 import Data.Bits
 import Data.List
 import Data.Maybe
+import Data.Monoid
 import Data.Traversable
 import Data.Word
 
@@ -42,10 +43,9 @@ combos k options =
   concatMap go (tails options) where
     go :: [a] -> [[a]]
     go os =
-      case listToMaybe os of
-        Just o ->
-          (o :) <$> combos (k - 1) (tail os)
-        Nothing -> []
+      case os of
+        (o : os) -> (o :) <$> combos (k - 1) os
+        [] -> []
 
 positions = [0 .. 15]
 
@@ -69,7 +69,34 @@ boards = do
   let positions'' = filter (not . (`elem` used)) positions'
   placeXs positions'' b
 
--- count letter board = foldMap (\i => cell i board == letter)
+foxPositions = forward ++ (reverse <$> forward) where
+  forward =
+    [[0, 1, 2],
+      [1, 2, 3],
+      [4, 5, 6],
+      [5, 6, 7],
+      [8, 9, 10],
+      [9, 10, 11],
+      [12, 13, 14],
+      [13, 14, 15],
+      [0, 5, 10],
+      [5, 10, 15],
+      [1, 6, 11],
+      [4, 9, 14],
+      [0, 4, 8],
+      [4, 8, 12],
+      [1, 5, 9],
+      [5, 9, 13],
+      [2, 6, 10],
+      [6, 10, 14],
+      [3, 7, 11],
+      [7, 11, 15],
+      [2, 5, 8],
+      [3, 6, 9],
+      [6, 9, 12],
+      [7, 10, 13]]
+
+hasFox board = getAny $ foldMap (\ps -> Any $ cell (ps !! 0) board == 0b00 && cell (ps !! 1) board == 0b01 && cell (ps !! 2) board == 0b10) foxPositions
 
 main = do
   print foxCombos
@@ -77,4 +104,4 @@ main = do
   print (combos 1 [1 .. 16])
   print (combos 2 [1 .. 16])
   print (length (combos fs [1 .. 16]) * length (combos os [1 .. 16 - fs]))
-  print (length boards)
+  print (length $ filter (not . hasFox) boards)
