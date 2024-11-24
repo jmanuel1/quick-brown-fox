@@ -2,6 +2,7 @@
 
 import Data.Bits
 import Data.Char
+import Data.Foldable
 import Data.List
 import Data.Maybe
 import Data.Monoid
@@ -60,38 +61,15 @@ grayCombos n k = go n (n - k) k
     go 0 _ _ = []
     go n nMinusK k = go (n - 1) (nMinusK - 1) k ++ ((.|. shiftL 1 (n - 1)) <$> reverse (go (n - 1) nMinusK (k - 1)))
 
-positions = [0 .. 15]
-
-placeFs poss board = do
-  poss <- combos fs poss
-  pure $ (poss, foldr (\p b -> setCell p 0b00 b) board poss)
-
-placeOs poss board = do
-  poss <- combos os poss
-  pure $ (poss, foldr (\p b -> setCell p 0b01 b) board poss)
-
-placeXs poss board = do
-  poss <- combos xs poss
-  pure $ foldr (\p b -> setCell p 0b10 b) board poss
-
 placeAll fPoss oPoss board = go fPoss oPoss 0 board
   where
     go _ _ 16 board = board
-    go fPoss oPoss curPos board =
-      if fPoss .&. 1 == 1
-        then go (shiftR fPoss 1) oPoss (curPos + 1) (setCell curPos 0b00 board)
-        else
-          if oPoss .&. 1 == 1
-            then go (shiftR fPoss 1) (shiftR oPoss 1) (curPos + 1) (setCell curPos 0b01 board)
-            else go (shiftR fPoss 1) (shiftR oPoss 1) (curPos + 1) (setCell curPos 0b10 board)
-
-boards :: [Board]
-boards = do
-  (used, b) <- placeFs positions 0
-  let positions' = filter (not . (`elem` used)) positions
-  (used, b) <- placeOs positions' b
-  let positions'' = filter (not . (`elem` used)) positions'
-  placeXs positions'' b
+    go fPoss oPoss curPos board
+      | fPoss .&. 1 == 1 =
+        go (shiftR fPoss 1) oPoss (curPos + 1) (setCell curPos 0b00 board)
+      | oPoss .&. 1 == 1 =
+        go (shiftR fPoss 1) (shiftR oPoss 1) (curPos + 1) (setCell curPos 0b01 board)
+      | otherwise = go (shiftR fPoss 1) (shiftR oPoss 1) (curPos + 1) (setCell curPos 0b10 board)
 
 boardsGray :: [Board]
 boardsGray = do
@@ -145,10 +123,8 @@ main = do
   print (combos 1 [1 .. 16])
   print (combos 2 [1 .. 16])
   print (length (combos fs [1 .. 16]) * length (combos os [1 .. 16 - fs]))
-  for (grayCombos 6 3) (putStrLn . flip (showIntAtBase 2 intToDigit) "")
-  -- let wins = filter (not . hasFox) boards
+  for_ (grayCombos 6 3) (putStrLn . flip (showIntAtBase 2 intToDigit) "")
   let wins = filter (not . hasFox) boardsGray
   print (length wins)
-
-  for wins $ \b -> do
+  for_ wins $ \b -> do
     putStrLn (showBoard b ++ "\n")
