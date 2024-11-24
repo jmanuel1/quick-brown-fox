@@ -1,1 +1,1 @@
-ghc fox.hs
+ghc fox.hs -o dist/fox

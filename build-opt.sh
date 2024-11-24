@@ -1,1 +1,1 @@
-ghc -O2 fox.hs -o fox-opt
+ghc -O2 fox.hs -o dist/fox-opt
