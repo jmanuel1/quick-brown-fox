@@ -42,12 +42,9 @@ setCell n letter board = shiftL letter (shiftL n 1) .|. board
 
 -- https://www.baeldung.com/cs/generate-k-combinations#2-revolving-door-algorithm
 grayCombos :: Int -> Int -> [Word16]
-grayCombos n k = go n (n - k) k
-  where
-    go :: Int -> Int -> Int -> [Word16]
-    go _ _ 0 = [0]
-    go 0 _ _ = []
-    go n nMinusK k = go (n - 1) (nMinusK - 1) k ++ ((.|. shiftL 1 (n - 1)) <$> reverse (go (n - 1) nMinusK (k - 1)))
+grayCombos _ 0 = [0]
+grayCombos 0 _ = []
+grayCombos n k = grayCombos (n - 1) k ++ ((.|. shiftL 1 (n - 1)) <$> reverse (grayCombos (n - 1) (k - 1)))
 
 placeAll fPoss oPoss board = go fPoss oPoss 0 board
   where
