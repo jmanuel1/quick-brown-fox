@@ -1,4 +1,22 @@
+Haskell code that prints all winning board configurations of the original
+version of the game ["Do not find the fox."](https://donotfindthefox.com)
+
+There are 2018016 possible configurations. 255304 of them are a win.
+
+Instead of representing the board as an ADT, I represent it as a Word32.
+Additionally, I use Word16s to represent each combination of positions of the
+letters F, O, and X on the board. I did this because I wanted to play around
+with bit representations. It might have had a performance benefit, but I didn't
+measure that, since I was focused on data representation.
+
 # Building
+
+You'll need an installation of the [Glasgow Haskell
+Compiler](https://www.haskell.org/downloads/) on your PATH. Other compilers
+might work, but I haven't tested them. I'm using GHC version 9.4.8 on Windows,
+at the time of writing.
+
+Then run:
 
 - Unoptimized: `./build.sh`
 - Optimized: `./build-opt.sh`
