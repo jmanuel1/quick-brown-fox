@@ -38,13 +38,16 @@ Representation:
 
 cell n board = shiftR board (shiftL n 1) .&. 0b11
 
+-- This assumes that the cell hasn't been set yet, i.e., that it's zero.
 setCell n letter board = shiftL letter (shiftL n 1) .|. board
 
 -- https://www.baeldung.com/cs/generate-k-combinations#2-revolving-door-algorithm
 grayCombos :: Int -> Int -> [Word16]
 grayCombos _ 0 = [0]
 grayCombos 0 _ = []
-grayCombos n k = grayCombos (n - 1) k ++ ((.|. shiftL 1 (n - 1)) <$> reverse (grayCombos (n - 1) (k - 1)))
+-- I don't care about the order of the codes because I don't need them to look
+-- like Gray codes, so I don't reverse the second half of the codes.
+grayCombos n k = grayCombos (n - 1) k ++ ((.|. shiftL 1 (n - 1)) <$> grayCombos (n - 1) (k - 1))
 
 placeAll fPoss oPoss board = go fPoss oPoss 0 board
   where
