@@ -3,6 +3,15 @@
 - Unoptimized: `./build.sh`
 - Optimized: `./build-opt.sh`
 
+Getting dumps from optimization passes:
+
+```sh
+ghc -O2 fox.hs -o fox-opt -ddump-simpl -fforce-recomp > dist/opt-asm.txt
+ghc -O2 fox.hs -o fox-opt -ddump-stg-final -fforce-recomp > dist/opt-stg.txt
+ghc -O2 fox.hs -o fox-opt -ddump-cmm -fforce-recomp > dist/opt-cmm.txt
+ghc -O2 fox.hs -o fox-opt -ddump-asm -fforce-recomp > dist/opt-asm.txt
+```
+
 # Perf
 
 Measuring using hyperfine on Windows, `fox` compiled on Windows, on commit e47dc9c908115dbe9b86e1fc36fb9828634b3fb0.
