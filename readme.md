@@ -24,10 +24,10 @@ Then run:
 Getting dumps from optimization passes:
 
 ```sh
-ghc -O2 fox.hs -o fox-opt -ddump-simpl -fforce-recomp > dist/opt-asm.txt
-ghc -O2 fox.hs -o fox-opt -ddump-stg-final -fforce-recomp > dist/opt-stg.txt
-ghc -O2 fox.hs -o fox-opt -ddump-cmm -fforce-recomp > dist/opt-cmm.txt
-ghc -O2 fox.hs -o fox-opt -ddump-asm -fforce-recomp > dist/opt-asm.txt
+ghc -O2 fox.hs -o dist/fox-opt -ddump-simpl -fforce-recomp > dist/opt-simpl.txt
+ghc -O2 fox.hs -o dist/fox-opt -ddump-stg-final -fforce-recomp > dist/opt-stg.txt
+ghc -O2 fox.hs -o dist/fox-opt -ddump-cmm -fforce-recomp > dist/opt-cmm.txt
+ghc -O2 fox.hs -o dist/fox-opt -ddump-asm -fforce-recomp > dist/opt-asm.txt
 ```
 
 # Perf
@@ -48,4 +48,24 @@ unoptimized:
 Benchmark 1: fox.exe
   Time (mean ± σ):     22.800 s ±  4.927 s    [User: 11.168 s, System: 0.045 s]
   Range (min … max):   17.921 s … 32.406 s    10 runs
+```
+
+## Turning on `Strict` language extension
+
+off:
+
+```
+PS A:\projects\quick-brown-fox> hyperfine dist\fox-opt.exe --warmup 5
+Benchmark 1: dist\fox-opt.exe
+  Time (mean ± σ):      1.030 s ±  0.076 s    [User: 0.756 s, System: 0.022 s]
+  Range (min … max):    0.939 s …  1.163 s    10 runs
+```
+
+on:
+
+```
+PS A:\projects\quick-brown-fox> hyperfine dist\fox-opt.exe --warmup 5
+Benchmark 1: dist\fox-opt.exe
+  Time (mean ± σ):     966.5 ms ±  76.4 ms    [User: 522.5 ms, System: 22.4 ms]
+  Range (min … max):   896.6 ms … 1107.6 ms    10 runs
 ```

@@ -1,4 +1,4 @@
-{-# LANGUAGE BinaryLiterals #-}
+{-# LANGUAGE BinaryLiterals, Strict #-}
 
 import Data.Bits
 import Data.Char
