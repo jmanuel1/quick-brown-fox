@@ -40,18 +40,6 @@ cell n board = shiftR board (shiftL n 1) .&. 0b11
 
 setCell n letter board = shiftL letter (shiftL n 1) .|. board
 
--- QUESTION: Can I generate boards just from an integer?
-combos :: Int -> [a] -> [[a]]
-combos 0 options = [[]]
-combos k options =
-  concatMap go (tails options)
-  where
-    go :: [a] -> [[a]]
-    go os =
-      case os of
-        (o : os) -> (o :) <$> combos (k - 1) os
-        [] -> []
-
 -- https://www.baeldung.com/cs/generate-k-combinations#2-revolving-door-algorithm
 grayCombos :: Int -> Int -> [Word16]
 grayCombos n k = go n (n - k) k
@@ -120,9 +108,6 @@ showBoard board = intercalate "\n" (flip showBoardRow board <$> [0, 1, 2, 3])
 main = do
   print foxCombos
   print ofxCombos
-  print (combos 1 [1 .. 16])
-  print (combos 2 [1 .. 16])
-  print (length (combos fs [1 .. 16]) * length (combos os [1 .. 16 - fs]))
   for_ (grayCombos 6 3) (putStrLn . flip (showIntAtBase 2 intToDigit) "")
   let wins = filter (not . hasFox) boardsGray
   print (length wins)
